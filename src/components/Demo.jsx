@@ -1,29 +1,21 @@
 import React, { useState } from 'react'
 import { copy, linkIcon, loader, tick } from '../assets'
+import { useLazyGetSummaryQuery } from '../services/article'
 
 const Demo = () => {
   const [article, setArticle] = useState()
   const [summarizedArticle, setSummarizedArticle] = useState()
 
+  const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
 
-  const url = `https://article-extractor-and-summarizer.p.rapidapi.com/summarize?url=${article}`;
-  const options = {
-    method: 'GET',
-    headers: {
-      'X-RapidAPI-Key': 'dfd0d0314amsh741988ddff712c6p1f8585jsn4ef2201fd0ea',
-      'X-RapidAPI-Host': 'article-extractor-and-summarizer.p.rapidapi.com'
-    }
-  };
 
   async function sendArticle(e) {
     e.preventDefault();
-    try {
-      const response = await fetch(url, options);
-      const result = await response.text();
-      setSummarizedArticle(result);
-    } catch (error) {
-      console.error(error);
-    }
+    const { data } = getSummary({
+      articleUrl: article
+    })
+
+    console.log(data);
   }
 
   return (
