@@ -15,7 +15,8 @@ const Demo = () => {
     }
   };
 
-  async function sendArticle() {
+  async function sendArticle(e) {
+    e.preventDefault();
     try {
       const response = await fetch(url, options);
       const result = await response.text();
@@ -28,15 +29,17 @@ const Demo = () => {
   return (
     <section className='main-section w-1/2 mt-12'>
 
-      <div className='main-section__input w-full relative'>
-        <input placeholder='Paste the article link' className='w-full url_input rounded-md peer'
-          onChange={(e) => setArticle(e.target.value)}
+      <form className='main-section__input w-full relative'
+        onSubmit={(e) => sendArticle(e)}
+      >
+        <input placeholder='Paste the article link' className='w-full url_input rounded-md peer' type='url'
+          onChange={(e) => setArticle(e.target.value)} required
         />
         <img src={linkIcon} className='absolute left-2 top-[9px]' />
-        <button className='submit_btn peer-focus:border-gray-700 peer-focus:text-gray-700' onClick={() => sendArticle()}>
+        <button className='submit_btn peer-focus:border-gray-700 peer-focus:text-gray-700' type='submit'>
           <p>↵</p>
         </button>
-      </div>
+      </form>
     </section>
   )
 }
