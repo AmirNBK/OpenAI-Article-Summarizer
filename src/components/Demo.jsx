@@ -15,7 +15,6 @@ const Demo = () => {
       articleUrl: article
     })
 
-    console.log(data);
   }
 
   return (
