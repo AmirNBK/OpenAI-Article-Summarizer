@@ -1,21 +1,26 @@
 import React, { useState } from 'react'
 import { copy, linkIcon, loader, tick } from '../assets'
 import { useLazyGetSummaryQuery } from '../services/article'
+import Summary from './Summary'
 
 const Demo = () => {
-  const [article, setArticle] = useState()
+  const [article, setArticle] = useState(
+    {
+      url: '',
+      summary: ''
+    }
+  )
+  const [allArticles, setAllArticles] = useState()
   const [summarizedArticle, setSummarizedArticle] = useState()
-
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
 
 
   async function sendArticle(e) {
     e.preventDefault();
-    const { data } = getSummary({
+    const { data } = await getSummary({
       articleUrl: article
-    })
-
-    console.log(data);
+    });
+    setSummarizedArticle(data.summary)
   }
 
   return (
@@ -32,6 +37,16 @@ const Demo = () => {
           <p>↵</p>
         </button>
       </form>
+
+      {summarizedArticle ? <div className='my-10'>
+        <Summary summary={summarizedArticle} />
+      </div>
+        :
+        isFetching ? <img src={loader} alt='loader' className='w-20 h-20 object-contain mx-auto mt-12' />
+          : error && <p className='font-inter font-bold text-black text-center'>
+            Something went wrong , please try again
+          </p>
+      }
     </section>
   )
 }
