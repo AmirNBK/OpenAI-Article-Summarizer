@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import logo from '../assets/logo.svg'
 
 const Hero = () => {
@@ -6,8 +6,10 @@ const Hero = () => {
         <header className='HeroSection w-full'>
             <nav className='header flex flex-row justify-between items-center md:items-baseline w-full mt-4'>
                 <img src={logo} className='w-28' alt='logo' />
-                <button className='bg-black text-white rounded-full px-6 text-sm py-2 duration-500 hover:bg-white hover:text-black hover:border hover:border-black'>
-                    Github </button>
+                <a
+                href='https://github.com/AmirNBK?tab=overview&from=2023-10-01&to=2023-10-28' target='_blank'
+                    className='bg-black text-white rounded-full px-6 text-sm py-2 duration-500 hover:bg-white hover:text-black hover:border hover:border-black'>
+                    Github </a>
             </nav>
 
             <div className='Introduction mt-16'>
@@ -24,4 +26,4 @@ const Hero = () => {
     )
 }
 
-export default Hero
+export default Hero;
