@@ -28,6 +28,16 @@ const Demo = () => {
     ]);
   }
 
+  const handleCopy = (item) => {
+    setCopied(item)
+    navigator.clipboard.writeText(item);
+    setTimeout(() => {
+      setCopied('')
+    }, 2000);
+  }
+
+  console.log(allArticles);
+
 
   return (
     <section className='main-section w-1/2 mt-12'>
