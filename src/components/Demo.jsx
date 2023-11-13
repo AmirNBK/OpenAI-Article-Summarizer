@@ -10,18 +10,24 @@ const Demo = () => {
       summary: ''
     }
   )
-  const [allArticles, setAllArticles] = useState()
+  const [allArticles, setAllArticles] = useState([]);
   const [summarizedArticle, setSummarizedArticle] = useState()
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
+  const [copied, setCopied] = useState("");
 
 
   async function sendArticle(e) {
     e.preventDefault();
     const { data } = await getSummary({
-      articleUrl: article
+      articleUrl: article.url
     });
     setSummarizedArticle(data.summary)
+    setAllArticles(prevArticles => [
+      ...prevArticles,
+      { summary: data.summary, url: article.url }
+    ]);
   }
+
 
   return (
     <section className='main-section w-1/2 mt-12'>
@@ -30,7 +36,7 @@ const Demo = () => {
         onSubmit={(e) => sendArticle(e)}
       >
         <input placeholder='Paste the article link' className='w-full url_input rounded-md peer' type='url'
-          onChange={(e) => setArticle(e.target.value)} required
+          onChange={(e) => setArticle({ url: e.target.value })} required
         />
         <img src={linkIcon} className='absolute left-2 top-[9px]' />
         <button className='submit_btn peer-focus:border-gray-700 peer-focus:text-gray-700' type='submit'>
@@ -38,7 +44,27 @@ const Demo = () => {
         </button>
       </form>
 
-      {summarizedArticle ? <div className='my-10'>
+      <div className='flex flex-col gap-1 max-h-60 overflow-y-auto mt-2'>
+        {allArticles.reverse().map((item, index) => (
+          <div
+            key={`link-${index}`}
+            onClick={() => setArticle(item)}
+            className='link_card'
+          >
+            <div className='copy_btn' onClick={() => handleCopy(item.url)}>
+              <img
+                src={copied === item.url ? tick : copy}
+                alt={copied === item.url ? "tick_icon" : "copy_icon"}
+                className='w-[40%] h-[40%] object-contain'
+              />
+            </div>
+            <p className='flex-1 font-satoshi text-blue-700 font-medium text-sm truncate'>
+              {item.url}
+            </p>
+          </div>
+        ))}
+      </div>
+      {(summarizedArticle && !(isFetching)) ? <div className='my-10'>
         <Summary summary={summarizedArticle} />
       </div>
         :
@@ -47,8 +73,8 @@ const Demo = () => {
             Something went wrong , please try again
           </p>
       }
-    </section>
+    </section >
   )
 }
 
-export default Demo
+export default Demo;
