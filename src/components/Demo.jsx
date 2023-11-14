@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { copy, linkIcon, loader, tick } from '../assets'
 import { useLazyGetSummaryQuery } from '../services/article'
 import Summary from './Summary'
@@ -14,6 +14,21 @@ const Demo = () => {
   const [summarizedArticle, setSummarizedArticle] = useState()
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery();
   const [copied, setCopied] = useState("");
+  let existingArticles = localStorage.getItem('allArticles');
+  let existingArticlesArray = existingArticles ? JSON.parse(existingArticles) : [];
+
+  useEffect(() => {
+    setAllArticles(existingArticlesArray);
+  }, []);
+
+  useEffect(() => {
+    if (article.url) {
+      existingArticlesArray = [...existingArticlesArray, article];
+    }
+    localStorage.setItem('allArticles', JSON.stringify(existingArticlesArray));
+  }, [article]);
+
+
 
 
   async function sendArticle(e) {
@@ -36,9 +51,6 @@ const Demo = () => {
     }, 2000);
   }
 
-  console.log(allArticles);
-
-
   return (
     <section className='main-section w-1/2 mt-12'>
 
@@ -55,7 +67,7 @@ const Demo = () => {
       </form>
 
       <div className='flex flex-col gap-1 max-h-60 overflow-y-auto mt-2'>
-        {allArticles.reverse().map((item, index) => (
+        {allArticles && allArticles.reverse().map((item, index) => (
           <div
             key={`link-${index}`}
             onClick={() => setArticle(item)}
