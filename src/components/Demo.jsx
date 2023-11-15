@@ -27,21 +27,23 @@ const Demo = () => {
     }
     localStorage.setItem('allArticles', JSON.stringify(existingArticlesArray));
   }, [article]);
-
-
-
+  const previousArticleClick = (item, e) => {
+    setArticle(item);
+    sendArticle(e);
+  }
 
   async function sendArticle(e) {
     e.preventDefault();
     const { data } = await getSummary({
       articleUrl: article.url
     });
-    setSummarizedArticle(data.summary)
+    setSummarizedArticle(data.summary);
     setAllArticles(prevArticles => [
       ...prevArticles,
       { summary: data.summary, url: article.url }
     ]);
   }
+
 
   const handleCopy = (item) => {
     setCopied(item)
@@ -67,24 +69,27 @@ const Demo = () => {
       </form>
 
       <div className='flex flex-col gap-1 max-h-60 overflow-y-auto mt-2'>
-        {allArticles && allArticles.reverse().map((item, index) => (
-          <div
-            key={`link-${index}`}
-            onClick={() => setArticle(item)}
-            className='link_card'
-          >
-            <div className='copy_btn' onClick={() => handleCopy(item.url)}>
-              <img
-                src={copied === item.url ? tick : copy}
-                alt={copied === item.url ? "tick_icon" : "copy_icon"}
-                className='w-[40%] h-[40%] object-contain'
-              />
+        {allArticles
+          .reverse()
+          .filter((item, index, array) => array.findIndex(a => a.url === item.url) === index)
+          .map((item, index) => (
+            <div
+              key={`link-${index}`}
+              onClick={(e) => previousArticleClick(item, e)}
+              className='link_card'
+            >
+              <div className='copy_btn' onClick={() => handleCopy(item.url)}>
+                <img
+                  src={copied === item.url ? tick : copy}
+                  alt={copied === item.url ? "tick_icon" : "copy_icon"}
+                  className='w-[40%] h-[40%] object-contain'
+                />
+              </div>
+              <p className='flex-1 font-satoshi text-blue-700 font-medium text-sm truncate'>
+                {item.url}
+              </p>
             </div>
-            <p className='flex-1 font-satoshi text-blue-700 font-medium text-sm truncate'>
-              {item.url}
-            </p>
-          </div>
-        ))}
+          ))}
       </div>
       {(summarizedArticle && !(isFetching)) ? <div className='my-10'>
         <Summary summary={summarizedArticle} />
